@@ -2,6 +2,7 @@
   "name": "kafka-retrier",
   "version": "1.0.2",
   "description": "Kafka Retrier Service",
+  "repository": "https://github.com/krish7x/kafka-retrier",
   "author": "Krishnakumar",
   "license": "MIT",
   "main": "./dist/index.js",
