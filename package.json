@@ -3,6 +3,7 @@
   "version": "1.0.3",
   "description": "Kafka Retrier Service",
   "repository": "https://github.com/krish7x/kafka-retrier",
+  "keywords": ["kafka", "kafkajs", "kafka-retry", "dlq", "kafka-dlq"],
   "author": "Krishnakumar",
   "license": "MIT",
   "main": "./dist/index.js",
