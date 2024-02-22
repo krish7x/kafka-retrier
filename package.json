@@ -1,6 +1,6 @@
 {
-  "name": "kafka_retrier",
-  "version": "1.0.0",
+  "name": "kafka-retrier",
+  "version": "1.0.1",
   "description": "Kafka Retrier Service",
   "author": "Krishnakumar",
   "license": "MIT",
