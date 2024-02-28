@@ -31,7 +31,5 @@ export default class EventQueue {
       throw new Error("Retry topic should be present and it must be a string");
     if (isEmpty(this.dlqTopic))
       throw new Error("Dlq topic should be present and it must be a string");
-    if (this.maxAllowedDlqs < 1)
-      throw new Error("Max Allowed Dlq should be greater than 0");
   }
 }

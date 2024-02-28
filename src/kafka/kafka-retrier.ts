@@ -1,6 +1,7 @@
 import Producer from "./producer";
 import EventQueue from "../dto/event-queue";
 import EventMessage from "../dto/event-message";
+import delay from "delay";
 import { KafkaConfig } from "kafkajs";
 import { IEventQueue } from "../interface/event-queue-interface";
 import { IEventMessage } from "../interface/event-message-interface";
@@ -9,13 +10,11 @@ export class KafkaRetrier {
   producer: Producer;
   eventQueue: EventQueue;
   eventMessage: EventMessage;
-  canPerformDlq: boolean;
 
   constructor(
     config: KafkaConfig,
     eventQeue: IEventQueue,
-    eventMessage: IEventMessage,
-    canPerformDlq: boolean
+    eventMessage: IEventMessage
   ) {
     const {
       originalTopic,
@@ -44,7 +43,6 @@ export class KafkaRetrier {
       currentRetryAttempt,
       currentDlqAttempt
     );
-    this.canPerformDlq = canPerformDlq;
   }
 
   async retry(isRetriable: boolean = true, retryCallback?: () => void) {
@@ -72,6 +70,24 @@ export class KafkaRetrier {
       ]);
     }
     if (typeof dlqCallback === "function" && dlqCallback) dlqCallback();
+  }
+
+  async delayedRetry(
+    delayMilliseconds: number,
+    isRetriable: boolean = true,
+    retryCallback?: () => void
+  ) {
+    await delay(delayMilliseconds);
+    await this.retry(isRetriable, retryCallback);
+  }
+
+  async delayedDlq(
+    delayMilliseconds: number,
+    isDlqable: boolean = true,
+    dlqCallback?: () => void
+  ) {
+    await delay(delayMilliseconds);
+    await this.dlq(isDlqable, dlqCallback);
   }
 
   async publishToRetryTopic(payload: object[]) {
@@ -102,5 +118,9 @@ export class KafkaRetrier {
 
   isDlqAttemptExhausted(): boolean {
     return this.eventMessage.currentDlqAttempt > this.eventQueue.maxAllowedDlqs;
+  }
+
+  canPerformDlq(): boolean {
+    return this.eventQueue.maxAllowedDlqs > 0;
   }
 }
