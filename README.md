@@ -82,8 +82,10 @@ To explore the example, navigate to the "example" folder and review the code in 
 ```bash
 cd example
 npm install
-npm run build (or) npm run dev // run this in terminal 1
-npm run start //run this in terminal
+npm run build # run this in terminal 1
+#(or)
+npm run dev # run this in terminal 1
+npm run start # run this in terminal 2
 ```
 
 ### Contributing
