@@ -15,9 +15,9 @@ npm install kafka-retrier
 ### 1. Import the necessary classes
 
 ```typescript
-import { KafkaRetrier } from 'kafka-retrier';
-import { KafkaConfig } from 'kafkajs';
-import { IEventQueue, IEventMessage } from 'your-event-queue-interface-path';
+import { KafkaRetrier } from "kafka-retrier";
+import { KafkaConfig } from "kafkajs";
+import { IEventQueue, IEventMessage } from "your-event-queue-interface-path";
 ```
 
 ### 2. Configure Kafka Retrier
@@ -34,14 +34,12 @@ const eventQueue: IEventQueue = {
 const eventMessage: IEventMessage = {
   // Your event message configuration
 };
-
-const canPerformDlq: boolean = true; // Set to true if DLQ is enabled
 ```
 
 ### 3. Create Kafka Retrier instance
 
 ```typescript
-const kafkaRetrier = new KafkaRetrier(kafkaConfig, eventQueue, eventMessage, canPerformDlq);
+const kafkaRetrier = new KafkaRetrier(kafkaConfig, eventQueue, eventMessage);
 ```
 
 ### 4. Retry Mechanism
@@ -54,7 +52,17 @@ async function retryCallback() {
 await kafkaRetrier.retry(true, retryCallback);
 ```
 
-### 5. Dead-Letter-Queue (DLQ) Mechanism
+### 5. Delayed Retry Mechanism
+
+```typescript
+async function retryCallback() {
+  // Custom retry logic here
+}
+
+await kafkaRetrier.delayedRetry(true, retryCallback);
+```
+
+### 6. Dead-Letter-Queue (DLQ) Mechanism
 
 ```typescript
 async function dlqCallback() {
@@ -63,6 +71,19 @@ async function dlqCallback() {
 
 await kafkaRetrier.dlq(true, dlqCallback);
 }
+```
+
+## Example
+
+In the "example" folder you can find an implementation of the Kafka retry mechanism. The implementation includes a `KafkaRetrier` class that provides functionality for retrying and moving messages to the DLQ based on specified conditions.
+
+To explore the example, navigate to the "example" folder and review the code in the `src/index.js` file. This demonstrates how to use the `KafkaRetrier` class for handling retries and DLQ in a Kafka setup.
+
+```bash
+cd example
+npm install
+npm run build (or) npm run dev // run this in terminal 1
+npm run start //run this in terminal
 ```
 
 ### Contributing
