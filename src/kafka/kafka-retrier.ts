@@ -76,11 +76,9 @@ export class KafkaRetrier {
     isRetriable: boolean = true,
     retryCallback?: () => void
   ) {
-    const intervalId = setInterval(async () => {
+    const intervalId = setTimeout(async () => {
       await this.retry(isRetriable, retryCallback);
-      if (this.isRetryAttemptExhausted()) {
-        clearInterval(intervalId);
-      }
+      clearTimeout(intervalId);
     }, delayMilliseconds);
   }
 
@@ -89,11 +87,9 @@ export class KafkaRetrier {
     isDlqable: boolean = true,
     dlqCallback?: () => void
   ) {
-    const intervalId = setInterval(async () => {
+    const intervalId = setTimeout(async () => {
       await this.dlq(isDlqable, dlqCallback);
-      if (this.isDlqAttemptExhausted()) {
-        clearInterval(intervalId);
-      }
+      clearTimeout(intervalId);
     }, delayMilliseconds);
   }
 
