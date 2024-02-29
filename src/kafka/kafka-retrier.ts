@@ -1,7 +1,6 @@
 import Producer from "./producer";
 import EventQueue from "../dto/event-queue";
 import EventMessage from "../dto/event-message";
-import delay from "delay";
 import { KafkaConfig } from "kafkajs";
 import { IEventQueue } from "../interface/event-queue-interface";
 import { IEventMessage } from "../interface/event-message-interface";
@@ -77,8 +76,12 @@ export class KafkaRetrier {
     isRetriable: boolean = true,
     retryCallback?: () => void
   ) {
-    await delay(delayMilliseconds);
-    await this.retry(isRetriable, retryCallback);
+    const intervalId = setInterval(async () => {
+      await this.retry(isRetriable, retryCallback);
+      if (this.isRetryAttemptExhausted()) {
+        clearInterval(intervalId);
+      }
+    }, delayMilliseconds);
   }
 
   async delayedDlq(
@@ -86,8 +89,12 @@ export class KafkaRetrier {
     isDlqable: boolean = true,
     dlqCallback?: () => void
   ) {
-    await delay(delayMilliseconds);
-    await this.dlq(isDlqable, dlqCallback);
+    const intervalId = setInterval(async () => {
+      await this.dlq(isDlqable, dlqCallback);
+      if (this.isDlqAttemptExhausted()) {
+        clearInterval(intervalId);
+      }
+    }, delayMilliseconds);
   }
 
   async publishToRetryTopic(payload: object[]) {
