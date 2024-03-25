@@ -29,7 +29,7 @@ export class KafkaRetrier {
       dlqTopic,
       maxAllowedRetries,
       maxAllowedDlqs
-    );
+    ).validate();
     const {
       originalPayload,
       errorMessage,
@@ -41,7 +41,7 @@ export class KafkaRetrier {
       errorMessage,
       currentRetryAttempt,
       currentDlqAttempt
-    );
+    ).validate();
   }
 
   async retry(isRetriable: boolean = true, retryCallback?: () => void) {

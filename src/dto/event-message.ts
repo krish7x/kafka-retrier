@@ -34,8 +34,9 @@ export default class EventMessage {
     this.errorMessage = errorMessage;
   }
 
-  validate() {
+  validate(): this {
     if (isEmpty(this.originalPayload) || isEmpty(this.errorMessage))
       throw new Error("Orginal Payload or Error Message should be present");
+    return this
   }
 }

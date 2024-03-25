@@ -22,7 +22,7 @@ export default class EventQueue {
     this.validate();
   }
 
-  validate() {
+  validate(): this {
     if (isEmpty(this.originalTopic))
       throw new Error(
         "Original topic should be present and it must be a string"
@@ -31,5 +31,6 @@ export default class EventQueue {
       throw new Error("Retry topic should be present and it must be a string");
     if (isEmpty(this.dlqTopic))
       throw new Error("Dlq topic should be present and it must be a string");
+    return this;
   }
 }
