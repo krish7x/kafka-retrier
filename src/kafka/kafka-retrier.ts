@@ -4,6 +4,12 @@ import EventMessage from "../dto/event-message";
 import { KafkaConfig } from "kafkajs";
 import { IEventQueue } from "../interface/event-queue-interface";
 import { IEventMessage } from "../interface/event-message-interface";
+import {
+  IDelayedDlq,
+  IDelayedRetry,
+  IDlq,
+  IRetry,
+} from "src/interface/kafka-retrier-interface";
 
 export class KafkaRetrier {
   producer: Producer;
@@ -44,7 +50,7 @@ export class KafkaRetrier {
     ).validate();
   }
 
-  async retry(isRetriable: boolean = true, retryCallback?: () => void) {
+  async retry({ isRetriable = true, retryCallback, dlqCallback }: IRetry) {
     this.eventMessage.incrementRetryAttempt();
     if (isRetriable) {
       await this.publishToRetryTopic([
@@ -52,12 +58,13 @@ export class KafkaRetrier {
           eventQueue: this.eventQueue,
           eventMessage: this.eventMessage,
         },
+        dlqCallback,
       ]);
     }
     if (typeof retryCallback === "function" && retryCallback) retryCallback();
   }
 
-  async dlq(isDlqable: boolean = true, dlqCallback?: () => void) {
+  async dlq({ isDlqable = true, dlqCallback }: IDlq) {
     this.eventMessage.resetRetryAttempt();
     this.eventMessage.incrementDlqAttempt();
     if (isDlqable) {
@@ -71,36 +78,37 @@ export class KafkaRetrier {
     if (typeof dlqCallback === "function" && dlqCallback) dlqCallback();
   }
 
-  async delayedRetry(
-    delayMilliseconds: number,
-    isRetriable: boolean = true,
-    retryCallback?: () => void
-  ) {
+  async delayedRetry({
+    isRetriable = true,
+    delayMilliseconds,
+    retryCallback,
+    dlqCallback,
+  }: IDelayedRetry) {
     const intervalId = setTimeout(async () => {
-      await this.retry(isRetriable, retryCallback);
+      await this.retry({ isRetriable, retryCallback, dlqCallback });
       clearTimeout(intervalId);
     }, delayMilliseconds);
   }
 
-  async delayedDlq(
-    delayMilliseconds: number,
-    isDlqable: boolean = true,
-    dlqCallback?: () => void
-  ) {
+  async delayedDlq({
+    isDlqable = true,
+    delayMilliseconds,
+    dlqCallback,
+  }: IDelayedDlq) {
     const intervalId = setTimeout(async () => {
-      await this.dlq(isDlqable, dlqCallback);
+      await this.dlq({ isDlqable, dlqCallback });
       clearTimeout(intervalId);
     }, delayMilliseconds);
   }
 
-  async publishToRetryTopic(payload: object[]) {
+  async publishToRetryTopic(payload: object[], dlqCallback?: () => void) {
     if (!this.isRetryAttemptExhausted()) {
       const topic = this.eventQueue.retryTopic;
       await this.producer.start();
       this.producer.sendBatch(payload, topic);
     } else {
       if (this.canPerformDlq) {
-        this.dlq();
+        this.dlq({ isDlqable: true, dlqCallback });
       }
     }
   }

@@ -49,7 +49,7 @@ async function retryCallback() {
   // Custom retry logic here
 }
 
-await kafkaRetrier.retry(true, retryCallback);
+await kafkaRetrier.retry({ retryCallback: retryCallback });
 ```
 
 ### 5. Delayed Retry Mechanism
@@ -59,7 +59,10 @@ async function retryCallback() {
   // Custom retry logic here
 }
 
-await kafkaRetrier.delayedRetry(true, retryCallback);
+await kafkaRetrier.delayedRetry({
+  delayMilliseconds: 5000,
+  retryCallback: retryCallback,
+});
 ```
 
 ### 6. Dead-Letter-Queue (DLQ) Mechanism
@@ -69,7 +72,9 @@ async function dlqCallback() {
   // Custom DLQ logic here
 }
 
-await kafkaRetrier.dlq(true, dlqCallback);
+await kafkaRetrier.dlq({
+  dlqCallback: dlqCallback
+});
 }
 ```
 
