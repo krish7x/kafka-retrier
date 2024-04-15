@@ -31,7 +31,7 @@ const performRetry = async () => {
     currentDlqAttempt: 0,
   };
   const kafkaRetrier = new KafkaRetrier(config, eventQueue, eventMessage);
-  await kafkaRetrier.retry();
+  await kafkaRetrier.retry({});
 };
 
 const performRetryWithDlq = async () => {
@@ -46,7 +46,7 @@ const performRetryWithDlq = async () => {
     currentDlqAttempt: 0,
   };
   const kafkaRetrier = new KafkaRetrier(config, eventQueue, eventMessage);
-  await kafkaRetrier.retry();
+  await kafkaRetrier.retry({});
 };
 
 const performDelayedRetry = async () => {
@@ -61,7 +61,7 @@ const performDelayedRetry = async () => {
     currentDlqAttempt: 0,
   };
   const kafkaRetrier = new KafkaRetrier(config, eventQueue, eventMessage);
-  await kafkaRetrier.delayedRetry(5000); //5 secs
+  await kafkaRetrier.delayedRetry({ delayMilliseconds: 5000 }); //5 secs
 };
 
 const performDelayedRetryWithDlq = async () => {
@@ -76,7 +76,7 @@ const performDelayedRetryWithDlq = async () => {
     currentDlqAttempt: 0,
   };
   const kafkaRetrier = new KafkaRetrier(config, eventQueue, eventMessage);
-  await kafkaRetrier.delayedRetry(5000); //5 secs
+  await kafkaRetrier.delayedRetry({ delayMilliseconds: 5000 }); //5 secs
 };
 
 const performDlq = async () => {
@@ -91,7 +91,7 @@ const performDlq = async () => {
     currentDlqAttempt: 0,
   };
   const kafkaRetrier = new KafkaRetrier(config, eventQueue, eventMessage);
-  await kafkaRetrier.dlq();
+  await kafkaRetrier.dlq({});
 };
 
 const performDelayedDlq = async () => {
@@ -106,7 +106,7 @@ const performDelayedDlq = async () => {
     currentDlqAttempt: 0,
   };
   const kafkaRetrier = new KafkaRetrier(config, eventQueue, eventMessage);
-  await kafkaRetrier.delayedDlq(5000); //5 secs
+  await kafkaRetrier.delayedDlq({ delayMilliseconds: 5000 }); //5 secs
 };
 
 // uncomment these functions to run independently

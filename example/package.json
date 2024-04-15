@@ -22,7 +22,7 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "kafka-retrier": "^1.1.0"
+    "kafka-retrier": "^1.1.9"
   },
   "devDependencies": {
     "@types/node": "^20.11.19",
