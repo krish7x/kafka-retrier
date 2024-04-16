@@ -53,13 +53,15 @@ export class KafkaRetrier {
   async retry({ isRetriable = true, retryCallback, dlqCallback }: IRetry) {
     this.eventMessage.incrementRetryAttempt();
     if (isRetriable) {
-      await this.publishToRetryTopic([
-        {
-          eventQueue: this.eventQueue,
-          eventMessage: this.eventMessage,
-        },
-        dlqCallback,
-      ]);
+      await this.publishToRetryTopic(
+        [
+          {
+            eventQueue: this.eventQueue,
+            eventMessage: this.eventMessage,
+          },
+        ],
+        dlqCallback
+      );
     }
     if (typeof retryCallback === "function" && retryCallback) retryCallback();
   }
